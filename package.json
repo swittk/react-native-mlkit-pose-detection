@@ -34,13 +34,13 @@
     "ios",
     "android"
   ],
-  "repository": "http://nope",
+  "repository": "https://github.com/swittk/react-native-mlkit-pose-detection",
   "author": "Switt Kongdachalert <swittssoftware@gmail.com> (https://swittssoftware.com)",
   "license": "MIT",
   "bugs": {
-    "url": "http://nope/issues"
+    "url": "https://github.com/swittk/react-native-mlkit-pose-detection/issues"
   },
-  "homepage": "http://nope#readme",
+  "homepage": "https://github.com/swittk/react-native-mlkit-pose-detection#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

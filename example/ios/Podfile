@@ -58,6 +58,14 @@ target 'MlkitPoseDetectionExample' do
     flipper_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
     
+    # Doing this because I encountered this error (https://github.com/expo/expo/issues/15800)
+    # x86_64-apple-ios-simulator not found
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings["ONLY_ACTIVE_ARCH"] = "NO"
+      end
+    end
+    
     # Fix for Apple Silicon not finding swift symbols
     # See comment here : https://github.com/react-native-community/releases/issues/238#issuecomment-890367992
     installer.aggregate_targets.each do |aggregate_target|

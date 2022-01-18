@@ -1,6 +1,7 @@
 # react-native-mlkit-pose-detection
 
-.
+MLKit Pose Detection (currently iOS only)
+
 
 ## Installation
 
@@ -9,6 +10,9 @@ npm install react-native-mlkit-pose-detection
 ```
 
 ## Usage
+
+TODO: DO THIS
+(See example for now)
 
 ```js
 import { multiply } from "react-native-mlkit-pose-detection";

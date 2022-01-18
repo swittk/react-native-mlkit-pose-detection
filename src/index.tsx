@@ -9,7 +9,8 @@ const LINKING_ERROR =
 const MLKitPoseDetectionLandmarkKeys = ["Nose", "LeftEyeInner", "LeftEye", "LeftEyeOuter", "RightEyeInner", "RightEye", "RightEyeOuter", "LeftEar", "RightEar", "MouthLeft", "MouthRight", "LeftShoulder", "RightShoulder", "LeftElbow", "RightElbow", "LeftWrist", "RightWrist", "LeftPinkyFinger", "RightPinkyFinger", "LeftIndexFinger", "RightIndexFinger", "LeftThumb", "RightThumb", "LeftHip", "RightHip", "LeftKnee", "RightKnee", "LeftAnkle", "RightAnkle", "LeftHeel", "RightHeel", "LeftToe", "RightToe"] as const;
 type MLKitPoseDetectionLandmarkKeyType = (typeof MLKitPoseDetectionLandmarkKeys)[number];
 
-const MlkitPoseDetection = NativeModules.MlkitPoseDetection
+// const MlkitPoseDetection = 
+NativeModules.MlkitPoseDetection
   ? NativeModules.MlkitPoseDetection
   : new Proxy(
     {},
@@ -38,9 +39,9 @@ export interface SKRNMLKitPoseDetector {
   process(frame: NativeFrameWrapper): SKRNMLKitPoseDetectionMLKPose[];
 }
 
-function multiply(a: number, b: number): Promise<number> {
-  return MlkitPoseDetection.multiply(a, b);
-}
+// function multiply(a: number, b: number): Promise<number> {
+//   return MlkitPoseDetection.multiply(a, b);
+// }
 
 export function MLKitPoseDetector(accurate?: boolean, detectionMode?: 'stream' | 'single'): SKRNMLKitPoseDetector {
   return (global as any).SKRNMLKitPoseDetectionNewPoseDetector(accurate, detectionMode);

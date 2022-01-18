@@ -13,6 +13,7 @@ export default function App() {
   const [frame, setFrame] = React.useState<NativeFrameWrapper>();
   const [pickedUri, setPickedUri] = React.useState<string>();
   const vidRef = React.useRef<NativeVideoWrapper>();
+  const poseDetector = React.useRef(MLKitPoseDetector());
 
   const onPickVideo = async () => {
     await ImagePicker.getMediaLibraryPermissionsAsync();
@@ -39,8 +40,8 @@ export default function App() {
 
   const onMLKitPose = async () => {
     if (!frame) { Alert.alert('Please pick a video frame first'); return; }
-    const poseDetector = MLKitPoseDetector();
-    const results = poseDetector.process(frame);
+    
+    const results = poseDetector.current.process(frame);
     console.log('results are', results.map((v) => v.landmarks()));
   }
 

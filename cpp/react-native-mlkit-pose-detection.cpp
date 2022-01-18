@@ -125,7 +125,7 @@ std::vector<facebook::jsi::PropNameID> SKRNMLKitPoseDetector::getPropertyNames(f
 
 
 
-void install(facebook::jsi::Runtime &jsiRuntime, std::function<std::shared_ptr<SKRNMLKitPoseDetector>(facebook::jsi::Runtime&, bool accurate, PoseDetectorDetectionMode detectionMode)> poseDetectorConstructor) {
+void SKRNMLKitPoseDetection::install(facebook::jsi::Runtime &jsiRuntime, std::function<std::shared_ptr<SKRNMLKitPoseDetector>(facebook::jsi::Runtime&, bool accurate, PoseDetectorDetectionMode detectionMode)> poseDetectorConstructor) {
     
     auto poseDetectorConstructorFunction =
     jsi::Function::createFromHostFunction
@@ -137,8 +137,8 @@ void install(facebook::jsi::Runtime &jsiRuntime, std::function<std::shared_ptr<S
      [&, poseDetectorConstructor](Runtime &runtime, const Value &thisValue, const Value *arguments,
                                   size_t count) -> Value
      {
-         bool accurate = count < 1 ? false : arguments[0].getBool();
-         std::string detectionModeString = count < 2 ? "stream" : arguments[1].getString(runtime).utf8(runtime);
+         bool accurate = (count >= 1 && arguments[0].isBool()) ? arguments[0].getBool() : false;
+         std::string detectionModeString = (count >= 2 && arguments[1].isString()) ? arguments[1].getString(runtime).utf8(runtime) : "stream";
          PoseDetectorDetectionMode mode = (detectionModeString == "stream") ? PoseDetectorDetectionModeStream : PoseDetectorDetectionModeSingleImage;
         std::shared_ptr<SKRNMLKitPoseDetector> obj = poseDetectorConstructor(runtime, accurate, mode);
          jsi::Object object = jsi::Object::createFromHostObject(runtime, obj);
@@ -148,6 +148,6 @@ void install(facebook::jsi::Runtime &jsiRuntime, std::function<std::shared_ptr<S
                                     std::move(poseDetectorConstructorFunction));
 }
 //void install(facebook::jsi::Runtime &jsiRuntime, std::shared_ptr<facebook::react::CallInvoker> invoker);
-void cleanup(facebook::jsi::Runtime &jsiRuntime) {
+void SKRNMLKitPoseDetection::cleanup(facebook::jsi::Runtime &jsiRuntime) {
     
 }

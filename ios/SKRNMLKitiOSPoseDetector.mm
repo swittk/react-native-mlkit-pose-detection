@@ -104,7 +104,10 @@ SKRNMLKitiOSPoseDetector::SKRNMLKitiOSPoseDetector(facebook::jsi::Runtime &_runt
     }
     poseDetector = [MLKPoseDetector poseDetectorWithOptions:options];
 }
-
+SKRNMLKitiOSPoseDetector::~SKRNMLKitiOSPoseDetector() {
+    NSLog(@"freeing poseDetector");
+    poseDetector = nil;
+}
 
 #ifdef HAS_SKRN_NATIVE_VIDEO
 std::vector<SKRNMLKitPoseDetectionMLKPose> SKRNMLKitiOSPoseDetector::process(std::shared_ptr<SKNativeFrameWrapper> frameWrapper) {
@@ -123,8 +126,11 @@ std::vector<SKRNMLKitPoseDetectionMLKPose> SKRNMLKitiOSPoseDetector::process(std
     return ret;
 }
 
-SKRNMLKitPoseDetectioniOSMLKPose::SKRNMLKitPoseDetectioniOSMLKPose(MLKPose *_pose) : pose(_pose) {
-    
+SKRNMLKitPoseDetectioniOSMLKPose::SKRNMLKitPoseDetectioniOSMLKPose(MLKPose *_pose) {
+    pose = _pose;
+}
+SKRNMLKitPoseDetectioniOSMLKPose::~SKRNMLKitPoseDetectioniOSMLKPose() {
+    pose = nil;
 }
 
 static SKRNMLKitPoseDetectionMLKPoseLandmark landmarkForMLKPoseLandmark(MLKPoseLandmark *l) {

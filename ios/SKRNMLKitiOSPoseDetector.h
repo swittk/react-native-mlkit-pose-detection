@@ -21,6 +21,7 @@ private:
     MLKPose *pose;
 public:
     SKRNMLKitPoseDetectioniOSMLKPose(MLKPose *pose);
+    ~SKRNMLKitPoseDetectioniOSMLKPose();
     virtual std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark> landmarks();
     virtual SKRNMLKitPoseDetectionMLKPoseLandmark landmarkOfType(std::string landmarkType);
 };
@@ -30,6 +31,7 @@ private:
     MLKPoseDetector *poseDetector;
 public:
     SKRNMLKitiOSPoseDetector(facebook::jsi::Runtime &_runtime, bool _accurate = false, SKRNMLKitPoseDetection::PoseDetectorDetectionMode _detectionMode = SKRNMLKitPoseDetection::PoseDetectorDetectionModeStream);
+    ~SKRNMLKitiOSPoseDetector();
 #ifdef HAS_SKRN_NATIVE_VIDEO
     virtual std::vector<SKRNMLKitPoseDetection::SKRNMLKitPoseDetectionMLKPose> process(std::shared_ptr<SKRNNativeVideo::SKNativeFrameWrapper>);
 #endif
