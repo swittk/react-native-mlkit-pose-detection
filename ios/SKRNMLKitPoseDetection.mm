@@ -66,6 +66,9 @@ RCT_EXPORT_MODULE()
     RCTCxxBridge *cxxBridge = (RCTCxxBridge *)self.bridge;
     facebook::jsi::Runtime *runtime = (facebook::jsi::Runtime *)cxxBridge.runtime;
     cleanup(*runtime);
+#if HAS_VISION_CAMERA
+    [[SKRNMLKitPoseDetectionVisionCameraFrameProcessor sharedInstance] invalidate];
+#endif
 }
 
 
@@ -76,7 +79,6 @@ RCT_REMAP_METHOD(initializeVisionCameraFrameProcessorWithOptions,
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withReject:(RCTPromiseRejectBlock)reject)
 {
-    NSLog(@"I am called with options %@", optionsDict);
     BOOL result = [[SKRNMLKitPoseDetectionVisionCameraFrameProcessor sharedInstance] initializePoseDetectorWithOptions:optionsDict];
     resolve(@(result));
 }

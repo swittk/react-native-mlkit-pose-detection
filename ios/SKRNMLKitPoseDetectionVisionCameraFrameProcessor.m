@@ -6,6 +6,8 @@
 //
 
 #import "SKRNMLKitPoseDetectionVisionCameraFrameProcessor.h"
+
+#if HAS_VISION_CAMERA
 #import <MLKitVision/MLKitVision.h>
 #import <MLKitPoseDetectionCommon/MLKitPoseDetectionCommon.h>
 #import <MLKitPoseDetection/MLKitPoseDetection.h>
@@ -24,6 +26,9 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
         __shared_pose_frame_processor = [SKRNMLKitPoseDetectionVisionCameraFrameProcessor new];
     });
     return __shared_pose_frame_processor;
+}
+-(void)invalidate {
+    poseDetector = nil;
 }
 -(BOOL)initializePoseDetectorWithOptions:(NSDictionary *)optionsDict {
     BOOL accurate = [optionsDict[@"accurate"] boolValue];
@@ -95,5 +100,6 @@ static inline id SKRNMLKitPoseDetectionVisionCameraFrameProcessorPlugin(Frame* f
 }
 
 VISION_EXPORT_FRAME_PROCESSOR(SKRNMLKitPoseDetectionVisionCameraFrameProcessorPlugin);
-
 @end
+
+#endif
