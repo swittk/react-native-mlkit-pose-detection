@@ -18,6 +18,7 @@ extern NSDictionary *SKRNMLKitPoseDetectionMapNativeLandmarkNamesToStringNames;
 
 @implementation SKRNMLKitPoseDetectionVisionCameraFrameProcessor {
     MLKPoseDetector *poseDetector;
+    BOOL canRun;
 }
 static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_processor = nil;
 +(SKRNMLKitPoseDetectionVisionCameraFrameProcessor *)sharedInstance {
@@ -27,7 +28,11 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
     });
     return __shared_pose_frame_processor;
 }
+-(void)initialize {
+    canRun = YES;
+}
 -(void)invalidate {
+    canRun = NO;
     poseDetector = nil;
 }
 -(BOOL)initializePoseDetectorWithOptions:(NSDictionary *)optionsDict {
@@ -79,7 +84,7 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
 }
 
 -(NSArray <NSDictionary *>*)poseResultsForVisionCameraFrame:(Frame *)frame {
-    if(!poseDetector) {
+    if(!poseDetector || !canRun) {
         NSLog(@"No Pose detector yet");
         @throw [NSError errorWithDomain:@"SKRNMLKitPoseDetection" code:404 userInfo:@{NSLocalizedDescriptionKey:@"Pose detector is not initialized yet. Call initializeVisionCameraFrameProcessorWithOptions: first"}];
     }

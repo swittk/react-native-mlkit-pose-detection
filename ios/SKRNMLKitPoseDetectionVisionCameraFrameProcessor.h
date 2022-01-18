@@ -16,5 +16,6 @@
 +(SKRNMLKitPoseDetectionVisionCameraFrameProcessor *)sharedInstance;
 -(BOOL)initializePoseDetectorWithOptions:(NSDictionary *)options;
 -(void)invalidate;
+-(void)initialize;
 @end
 #endif

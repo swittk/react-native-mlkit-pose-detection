@@ -60,6 +60,9 @@ RCT_EXPORT_MODULE()
         std::shared_ptr<SKRNMLKitPoseDetector>ret =  std::make_shared<SKRNMLKitiOSPoseDetector>(runtime, accurate, detectionMode);
         return ret;
     });
+#if HAS_VISION_CAMERA
+    [[SKRNMLKitPoseDetectionVisionCameraFrameProcessor sharedInstance] initialize];
+#endif
 }
 
 - (void)invalidate {
