@@ -1,5 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
 import type { NativeFrameWrapper } from 'react-native-native-video';
+export { scanSKRNMLKitPose } from './FrameProcessor';
 const LINKING_ERROR =
   `The package 'react-native-mlkit-pose-detection' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
@@ -9,17 +10,25 @@ const LINKING_ERROR =
 export const MLKitPoseDetectionLandmarkKeys = ["Nose", "LeftEyeInner", "LeftEye", "LeftEyeOuter", "RightEyeInner", "RightEye", "RightEyeOuter", "LeftEar", "RightEar", "MouthLeft", "MouthRight", "LeftShoulder", "RightShoulder", "LeftElbow", "RightElbow", "LeftWrist", "RightWrist", "LeftPinkyFinger", "RightPinkyFinger", "LeftIndexFinger", "RightIndexFinger", "LeftThumb", "RightThumb", "LeftHip", "RightHip", "LeftKnee", "RightKnee", "LeftAnkle", "RightAnkle", "LeftHeel", "RightHeel", "LeftToe", "RightToe"] as const;
 export type MLKitPoseDetectionLandmarkKeyType = (typeof MLKitPoseDetectionLandmarkKeys)[number];
 
-// const MlkitPoseDetection = 
-NativeModules.MlkitPoseDetection
-  ? NativeModules.MlkitPoseDetection
-  : new Proxy(
-    {},
-    {
-      get() {
-        throw new Error(LINKING_ERROR);
-      },
-    }
-  );
+const SKRNMlkitPoseDetection =
+  NativeModules.SKRNMlkitPoseDetection
+    ? NativeModules.SKRNMlkitPoseDetection
+    : new Proxy(
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );
+
+export async function initializeVisionCameraFrameProcessor(opts?: {
+  accurate?: boolean,
+  detectionMode?: 'stream' | 'image'
+}): Promise<boolean> {
+  return SKRNMlkitPoseDetection.initializeVisionCameraFrameProcessorWithOptions(opts || {});
+}
+
 export interface Position3D {
   x: number; y: number; z: number;
 }
@@ -46,4 +55,3 @@ export interface SKRNMLKitPoseDetector {
 export function MLKitPoseDetector(accurate?: boolean, detectionMode?: 'stream' | 'single'): SKRNMLKitPoseDetector {
   return (global as any).SKRNMLKitPoseDetectionNewPoseDetector(accurate, detectionMode);
 }
-

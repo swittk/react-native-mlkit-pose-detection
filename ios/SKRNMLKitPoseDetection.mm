@@ -71,10 +71,12 @@ RCT_EXPORT_MODULE()
 
 #if HAS_VISION_CAMERA
 
-RCT_EXPORT_METHOD(initializeVisionCameraFrameProcessorWithOptions:(NSDictionary *)optionsDict
+RCT_REMAP_METHOD(initializeVisionCameraFrameProcessorWithOptions,
+                 initializeVisionCameraFrameProcessorWithOptions:(NSDictionary *)optionsDict
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withReject:(RCTPromiseRejectBlock)reject)
 {
+    NSLog(@"I am called with options %@", optionsDict);
     BOOL result = [[SKRNMLKitPoseDetectionVisionCameraFrameProcessor sharedInstance] initializePoseDetectorWithOptions:optionsDict];
     resolve(@(result));
 }

@@ -4,7 +4,9 @@ import { StyleSheet, View, Text, Alert, Button, TextInput } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { openVideo, NativeVideoWrapper, NativeVideoFrameView, NativeFrameWrapper } from 'react-native-native-video';
 
-import { MLKitPoseDetector } from 'react-native-mlkit-pose-detection';
+import { initializeVisionCameraFrameProcessor, MLKitPoseDetector } from 'react-native-mlkit-pose-detection';
+import { TestVisionCamera } from './TestVisionCamera';
+initializeVisionCameraFrameProcessor();
 
 export default function App() {
   const [result, setResult] = React.useState<number | undefined>();
@@ -14,6 +16,8 @@ export default function App() {
   const [pickedUri, setPickedUri] = React.useState<string>();
   const vidRef = React.useRef<NativeVideoWrapper>();
   const poseDetector = React.useRef(MLKitPoseDetector());
+  const [showVisionCamera, setShowVisionCamera] = React.useState(false);
+  const switchMode = React.useCallback(() => { setShowVisionCamera(v => !v) }, []);
 
   const onPickVideo = async () => {
     await ImagePicker.getMediaLibraryPermissionsAsync();
@@ -40,7 +44,7 @@ export default function App() {
 
   const onMLKitPose = async () => {
     if (!frame) { Alert.alert('Please pick a video frame first'); return; }
-    
+
     const results = poseDetector.current.process(frame);
     // console.log('results are', results.map((v) => v.landmarks()));
     console.log('result LeftEye', results[0].landmarkOfType('LeftEye'));
@@ -49,22 +53,31 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Button title='Pick Video' onPress={onPickVideo} />
-      <TextInput style={{ fontSize: 16, padding: 8, borderRadius: 6, borderWidth: 1, borderColor: '#888' }} value={goToFrame} onChangeText={setGoToFrame} onEndEditing={() => {
-        let num = Number(goToFrame);
-        if (Number.isNaN(num)) {
-          Alert.alert('enter valid number pls');
-          return;
-        }
-        setFrameIdx(num);
-      }} />
-      <Text>Video uri: {pickedUri}</Text>
-      <Button title='Get video properties' onPress={onVideoProperties} />
-      <Button title='Try MLKit Pose' onPress={onMLKitPose} />
-      <NativeVideoFrameView
-        style={{ backgroundColor: 'green', borderWidth: 1, borderRadius: 8, flex: 1, alignSelf: 'stretch' }}
-        frameData={frame}
-      />
+      <View style={{ height: 20 }}></View>
+      <Button title='Switch Mode' onPress={switchMode} />
+      {
+        !showVisionCamera ? <View style={{ flex: 1 }}>
+          <Button title='Pick Video' onPress={onPickVideo} />
+          <TextInput style={{ fontSize: 16, padding: 8, borderRadius: 6, borderWidth: 1, borderColor: '#888' }} value={goToFrame} onChangeText={setGoToFrame} onEndEditing={() => {
+            let num = Number(goToFrame);
+            if (Number.isNaN(num)) {
+              Alert.alert('enter valid number pls');
+              return;
+            }
+            setFrameIdx(num);
+          }} />
+          <Text>Video uri: {pickedUri}</Text>
+          <Button title='Get video properties' onPress={onVideoProperties} />
+          <Button title='Try MLKit Pose' onPress={onMLKitPose} />
+          <NativeVideoFrameView
+            style={{ backgroundColor: 'green', borderWidth: 1, borderRadius: 8, flex: 1, alignSelf: 'stretch' }}
+            frameData={frame}
+          />
+        </View>
+          :
+          <TestVisionCamera />
+      }
+
     </View>
   );
 }
@@ -72,8 +85,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   box: {
     width: 60,

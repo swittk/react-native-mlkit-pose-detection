@@ -45,6 +45,7 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
     }
     
     poseDetector = [MLKPoseDetector poseDetectorWithOptions:options];
+    NSLog(@"initialized poseDetector %@", poseDetector);
     return YES;
 }
 
@@ -54,6 +55,7 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
         NSMutableDictionary *poseLandmarks = [NSMutableDictionary new];
         NSArray<MLKPoseLandmark *>*landmarks = [p landmarks];
         for(MLKPoseLandmark *l in landmarks) {
+            NSLog(@"dict exists? %d", SKRNMLKitPoseDetectionMapNativeLandmarkNamesToStringNames.count);
             NSString *outType = SKRNMLKitPoseDetectionMapNativeLandmarkNamesToStringNames[l.type];
             NSDictionary *convDict = @{
                 @"type": outType,
@@ -73,6 +75,7 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
 
 -(NSArray <NSDictionary *>*)poseResultsForVisionCameraFrame:(Frame *)frame {
     if(!poseDetector) {
+        NSLog(@"No Pose detector yet");
         @throw [NSError errorWithDomain:@"SKRNMLKitPoseDetection" code:404 userInfo:@{NSLocalizedDescriptionKey:@"Pose detector is not initialized yet. Call initializeVisionCameraFrameProcessorWithOptions: first"}];
     }
     MLKVisionImage *image = [[MLKVisionImage alloc] initWithBuffer:frame.buffer];
@@ -82,6 +85,7 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
     if(error) {
         NSLog(@"Error processing frame %@", error);
     }
+    NSLog(@"got poses, to send to bridge");
     return [self posesToBridge:poses];
 }
 
