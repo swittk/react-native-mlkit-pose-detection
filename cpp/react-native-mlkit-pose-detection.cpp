@@ -10,11 +10,6 @@ using namespace facebook;
 using namespace jsi;
 using namespace SKRNMLKitPoseDetection;
 
-
-int multiply(float a, float b) {
-    return a * b;
-}
-
 jsi::Object Point3D::toJSIObject(facebook::jsi::Runtime &runtime) {
     jsi::Object ret = jsi::Object(runtime);
     ret.setProperty(runtime, "x", x);
@@ -36,7 +31,7 @@ jsi::Object SKRNMLKitPoseDetectionMLKPoseLandmark::toJSIObject(facebook::jsi::Ru
     ret.setProperty(runtime, "inFrameLikelihood", inFrameLikelihood);
     ret.setProperty(runtime, "type", jsi::String::createFromUtf8(runtime, type));
     ret.setProperty(runtime, "position", position.toJSIObject(runtime));
-    printf("conv %f, %s, (%f,%f,%f)", inFrameLikelihood, type.c_str(), position.x, position.y, position.z);
+//    printf("conv %f, %s, (%f,%f,%f)", inFrameLikelihood, type.c_str(), position.x, position.y, position.z);
     return ret;
 }
 

@@ -13,7 +13,7 @@
 using namespace SKRNNativeVideo;
 using namespace SKRNMLKitPoseDetection;
 
-static NSDictionary *mapStringLandmarkNamesToNativeNames = @{
+NSDictionary *SKRNMLKitPoseDetectionMapStringLandmarkNamesToNativeNames = @{
     @"Nose": MLKPoseLandmarkTypeNose,
     @"LeftEyeInner": MLKPoseLandmarkTypeLeftEyeInner,
     @"LeftEye": MLKPoseLandmarkTypeLeftEye,
@@ -48,7 +48,7 @@ static NSDictionary *mapStringLandmarkNamesToNativeNames = @{
     @"LeftToe": MLKPoseLandmarkTypeLeftToe,
     @"RightToe": MLKPoseLandmarkTypeRightToe
 };
-static NSDictionary *mapNativeLandmarkNamesToStringNames = @{
+NSDictionary *SKRNMLKitPoseDetectionMapNativeLandmarkNamesToStringNames = @{
   MLKPoseLandmarkTypeNose: @"Nose",
   MLKPoseLandmarkTypeLeftEyeInner: @"LeftEyeInner",
   MLKPoseLandmarkTypeLeftEye: @"LeftEye",
@@ -143,7 +143,7 @@ static SKRNMLKitPoseDetectionMLKPoseLandmark landmarkForMLKPoseLandmark(MLKPoseL
     auto toPush = SKRNMLKitPoseDetectionMLKPoseLandmark();
     Point3D p;
     p.x = l.position.x; p.y = l.position.y; p.z = l.position.z;
-    toPush.type = [mapNativeLandmarkNamesToStringNames[l.type] cStringUsingEncoding:NSUTF8StringEncoding];
+    toPush.type = [SKRNMLKitPoseDetectionMapNativeLandmarkNamesToStringNames[l.type] cStringUsingEncoding:NSUTF8StringEncoding];
     toPush.position = std::move(p);
     toPush.inFrameLikelihood = l.inFrameLikelihood;
     return toPush;
@@ -161,7 +161,7 @@ std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark> SKRNMLKitPoseDetectioniOSMLKP
 }
 
 SKRNMLKitPoseDetectionMLKPoseLandmark SKRNMLKitPoseDetectioniOSMLKPose::landmarkOfType(std::string landmarkType) {
-    MLKPoseLandmark *l = [pose landmarkOfType:mapStringLandmarkNamesToNativeNames[[NSString stringWithUTF8String:landmarkType.c_str()]]];
+    MLKPoseLandmark *l = [pose landmarkOfType:SKRNMLKitPoseDetectionMapStringLandmarkNamesToNativeNames[[NSString stringWithUTF8String:landmarkType.c_str()]]];
     return landmarkForMLKPoseLandmark(l);
 }
 
