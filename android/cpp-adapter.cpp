@@ -1,8 +1,8 @@
 #include <jni.h>
-#include "example.h"
+#include "react-native-mlkit-pose-detection.h"
 
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_reactnativemlkitposedetection_MlkitPoseDetectionModule_nativeMultiply(JNIEnv *env, jclass type, jint a, jint b) {
-    return example::multiply(a, b);
+    return SKRNMLKitPoseDetection::multiply(a, b);
 }
