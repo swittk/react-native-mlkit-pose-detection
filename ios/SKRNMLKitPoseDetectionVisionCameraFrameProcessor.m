@@ -17,7 +17,7 @@ extern NSDictionary *SKRNMLKitPoseDetectionMapStringLandmarkNamesToNativeNames;
 extern NSDictionary *SKRNMLKitPoseDetectionMapNativeLandmarkNamesToStringNames;
 
 @implementation SKRNMLKitPoseDetectionVisionCameraFrameProcessor {
-    MLKPoseDetector *poseDetector;
+    MLKPoseDetector *_poseDetector;
     BOOL canRun;
 }
 static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_processor = nil;
@@ -33,7 +33,7 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
 }
 -(void)invalidate {
     canRun = NO;
-    poseDetector = nil;
+    self.poseDetector = nil;
 }
 -(BOOL)initializePoseDetectorWithOptions:(NSDictionary *)optionsDict {
     BOOL accurate = [optionsDict[@"accurate"] boolValue];
@@ -54,9 +54,20 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
         options.detectorMode = MLKPoseDetectorModeSingleImage;
     }
     
-    poseDetector = [MLKPoseDetector poseDetectorWithOptions:options];
-    NSLog(@"initialized poseDetector %@", poseDetector);
+    self.poseDetector = [MLKPoseDetector poseDetectorWithOptions:options];
+    NSLog(@"initialized poseDetector %@", self.poseDetector);
     return YES;
+}
+
+-(MLKPoseDetector *)poseDetector {
+    @synchronized(self) {
+        return _poseDetector;
+    }
+}
+-(void)setPoseDetector:(MLKPoseDetector *)p {
+    @synchronized(self) {
+        _poseDetector = p;
+    }
 }
 
 -(NSArray <NSDictionary *>*)posesToBridge:(NSArray <MLKPose *>*)poses {
@@ -84,14 +95,14 @@ static SKRNMLKitPoseDetectionVisionCameraFrameProcessor *__shared_pose_frame_pro
 }
 
 -(NSArray <NSDictionary *>*)poseResultsForVisionCameraFrame:(Frame *)frame {
-    if(!poseDetector || !canRun) {
+    if(!self.poseDetector || !canRun) {
         NSLog(@"No Pose detector yet");
         @throw [NSError errorWithDomain:@"SKRNMLKitPoseDetection" code:404 userInfo:@{NSLocalizedDescriptionKey:@"Pose detector is not initialized yet. Call initializeVisionCameraFrameProcessorWithOptions: first"}];
     }
     MLKVisionImage *image = [[MLKVisionImage alloc] initWithBuffer:frame.buffer];
     image.orientation = frame.orientation;
     NSError *error;
-    NSArray <MLKPose *>*poses = [poseDetector resultsInImage:image error:&error];
+    NSArray <MLKPose *>*poses = [self.poseDetector resultsInImage:image error:&error];
     if(error) {
         NSLog(@"Error processing frame %@", error);
     }
