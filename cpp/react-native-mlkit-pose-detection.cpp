@@ -24,8 +24,11 @@ jsi::Object Point3D::toJSIObject(facebook::jsi::Runtime &runtime) {
 }
 
 jsi::Object SKRNMLKitPoseDetectionMLKPose::toJSIObject(facebook::jsi::Runtime &runtime) {
-    jsi::Object ret = jsi::Object(runtime);
-    return jsi::Object::createFromHostObject(runtime, std::make_shared<SKRNMLKitPoseDetectionMLKPoseHostObject>(runtime, *this));
+    return jsi::Object::createFromHostObject
+    (runtime,
+     std::make_shared<SKRNMLKitPoseDetectionMLKPoseHostObject>
+     (runtime)
+     );
 }
 
 jsi::Object SKRNMLKitPoseDetectionMLKPoseLandmark::toJSIObject(facebook::jsi::Runtime &runtime) {
@@ -33,11 +36,12 @@ jsi::Object SKRNMLKitPoseDetectionMLKPoseLandmark::toJSIObject(facebook::jsi::Ru
     ret.setProperty(runtime, "inFrameLikelihood", inFrameLikelihood);
     ret.setProperty(runtime, "type", jsi::String::createFromUtf8(runtime, type));
     ret.setProperty(runtime, "position", position.toJSIObject(runtime));
+    printf("conv %f, %s, (%f,%f,%f)", inFrameLikelihood, type.c_str(), position.x, position.y, position.z);
     return ret;
 }
 
 
-SKRNMLKitPoseDetectionMLKPoseHostObject::SKRNMLKitPoseDetectionMLKPoseHostObject(facebook::jsi::Runtime &_runtime, SKRNMLKitPoseDetectionMLKPose _pose): runtime(_runtime), pose(_pose) {
+SKRNMLKitPoseDetectionMLKPoseHostObject::SKRNMLKitPoseDetectionMLKPoseHostObject(facebook::jsi::Runtime &_runtime): runtime(_runtime) {
 }
 
 facebook::jsi::Value SKRNMLKitPoseDetectionMLKPoseHostObject::get(facebook::jsi::Runtime &runtime, const facebook::jsi::PropNameID &name) {
@@ -48,10 +52,10 @@ facebook::jsi::Value SKRNMLKitPoseDetectionMLKPoseHostObject::get(facebook::jsi:
             return jsi::Function::createFromHostFunction
             (runtime, name, 0, [&](jsi::Runtime &runtime, const jsi::Value &thisValue, const jsi::Value *arguments, size_t count) -> jsi::Value
              {
-                std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark> landmarks = pose.landmarks();
-                jsi::Array ret = jsi::Array(runtime, landmarks.size());
-                for(int i = 0; i < landmarks.size(); i++) {
-                    ret.setValueAtIndex(runtime, i, landmarks[i].toJSIObject(runtime));
+                std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark> lm = landmarks();
+                jsi::Array ret = jsi::Array(runtime, lm.size());
+                for(int i = 0; i < lm.size(); i++) {
+                    ret.setValueAtIndex(runtime, i, lm[i].toJSIObject(runtime));
                 }
                 return ret;
             });
@@ -62,7 +66,7 @@ facebook::jsi::Value SKRNMLKitPoseDetectionMLKPoseHostObject::get(facebook::jsi:
              {
                 if(count < 1) return jsi::Value::undefined();
                 std::string landmarkType = arguments[0].asString(runtime).utf8(runtime);
-                return pose.landmarkOfType(landmarkType).toJSIObject(runtime);
+                return landmarkOfType(landmarkType).toJSIObject(runtime);
             });
         } break;
         default: return jsi::Value::undefined();
@@ -96,10 +100,10 @@ facebook::jsi::Value SKRNMLKitPoseDetector::get(facebook::jsi::Runtime &runtime,
                     throw jsi::JSError(runtime, "1 argument is expected for `process`");
                 }
                 std::shared_ptr<SKRNNativeVideo::SKNativeFrameWrapper> obj = arguments[0].asObject(runtime).asHostObject<SKRNNativeVideo::SKNativeFrameWrapper>(runtime);
-                std::vector<SKRNMLKitPoseDetectionMLKPose> results = process(obj);
+                std::vector<std::shared_ptr<SKRNMLKitPoseDetectionMLKPose>> results = process(obj);
                 jsi::Array ret = jsi::Array(runtime, results.size());
                 for(int i = 0; i < results.size(); i++) {
-                    ret.setValueAtIndex(runtime, i, results[i].toJSIObject(runtime));
+                    ret.setValueAtIndex(runtime, i, results[i].get()->toJSIObject(runtime));
                 }
                 return ret;
             });

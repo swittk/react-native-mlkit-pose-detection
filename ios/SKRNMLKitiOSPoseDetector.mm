@@ -6,6 +6,7 @@
 //
 
 #import "SKRNMLKitiOSPoseDetector.h"
+
 #ifdef HAS_SKRN_NATIVE_VIDEO
 #import <react-native-native-video/SKiOSNativeVideoCPP.h>
 #endif
@@ -110,21 +111,26 @@ SKRNMLKitiOSPoseDetector::~SKRNMLKitiOSPoseDetector() {
 }
 
 #ifdef HAS_SKRN_NATIVE_VIDEO
-std::vector<SKRNMLKitPoseDetectionMLKPose> SKRNMLKitiOSPoseDetector::process(std::shared_ptr<SKNativeFrameWrapper> frameWrapper) {
+std::vector<std::shared_ptr<SKRNMLKitPoseDetection::SKRNMLKitPoseDetectionMLKPose>> SKRNMLKitiOSPoseDetector::process(std::shared_ptr<SKRNNativeVideo::SKNativeFrameWrapper> frameWrapper) {
     SKiOSNativeFrameWrapper *frame = (SKiOSNativeFrameWrapper *)(frameWrapper.get());
     MLKVisionImage *image = [[MLKVisionImage alloc] initWithBuffer:frame->buffer];
     image.orientation = frame->orientation;
     NSError *error;
     NSArray <MLKPose *>*poses = [poseDetector resultsInImage:image error:&error];
-    if(![poses count]) {
-        return std::vector<SKRNMLKitPoseDetectionMLKPose>();
+    if(error) {
+        NSLog(@"Error processing frame %@", error);
     }
-    std::vector<SKRNMLKitPoseDetectionMLKPose> ret;
+//    NSLog(@"poses are %@", poses);
+    if(![poses count]) {
+        return std::vector<std::shared_ptr<SKRNMLKitPoseDetectionMLKPose>>();
+    }
+    std::vector<std::shared_ptr<SKRNMLKitPoseDetectionMLKPose>> ret;
     for(MLKPose *pose in poses) {
-        ret.push_back(SKRNMLKitPoseDetectioniOSMLKPose(pose));
+        ret.push_back(std::make_shared<SKRNMLKitPoseDetectioniOSMLKPose>(pose));
     }
     return ret;
 }
+#endif
 
 SKRNMLKitPoseDetectioniOSMLKPose::SKRNMLKitPoseDetectioniOSMLKPose(MLKPose *_pose) {
     pose = _pose;
@@ -150,6 +156,7 @@ std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark> SKRNMLKitPoseDetectioniOSMLKP
         auto toPush = landmarkForMLKPoseLandmark(l);
         ret.push_back(std::move(toPush));
     }
+//    NSLog(@"got landmarks len %d, outlen %d", landmarks.count, ret.size());
     return ret;
 }
 
@@ -158,5 +165,18 @@ SKRNMLKitPoseDetectionMLKPoseLandmark SKRNMLKitPoseDetectioniOSMLKPose::landmark
     return landmarkForMLKPoseLandmark(l);
 }
 
+SKRNMLKitPoseDetectioniOSMLKPoseHostObject::SKRNMLKitPoseDetectioniOSMLKPoseHostObject(facebook::jsi::Runtime &_runtime, SKRNMLKitPoseDetectioniOSMLKPose _pose) : SKRNMLKitPoseDetectionMLKPoseHostObject(_runtime), pose(_pose) {
+    
+};
 
-#endif
+
+using namespace facebook;
+jsi::Object SKRNMLKitPoseDetectioniOSMLKPose::toJSIObject(facebook::jsi::Runtime &runtime) {
+    return jsi::Object::createFromHostObject
+    (runtime,
+     std::make_shared<SKRNMLKitPoseDetectioniOSMLKPoseHostObject>
+     (runtime,
+      *this
+      )
+     );
+}

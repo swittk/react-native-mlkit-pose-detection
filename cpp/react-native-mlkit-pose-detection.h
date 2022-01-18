@@ -38,7 +38,7 @@ public:
     float inFrameLikelihood;
     Point3D position;
     std::string type;
-    facebook::jsi::Object toJSIObject(facebook::jsi::Runtime &runtime);
+    virtual facebook::jsi::Object toJSIObject(facebook::jsi::Runtime &runtime);
 //    std::string type() {return "";}
 };
 
@@ -53,16 +53,19 @@ public:
     virtual SKRNMLKitPoseDetectionMLKPoseLandmark landmarkOfType(std::string landmarkType) {
         return SKRNMLKitPoseDetectionMLKPoseLandmark();
     }
-    facebook::jsi::Object toJSIObject(facebook::jsi::Runtime &runtime);
+    virtual facebook::jsi::Object toJSIObject(facebook::jsi::Runtime &runtime);
 };
 
 class SKRNMLKitPoseDetectionMLKPoseHostObject : public facebook::jsi::HostObject {
 public:
-    SKRNMLKitPoseDetectionMLKPose pose;
     facebook::jsi::Runtime &runtime;
-    SKRNMLKitPoseDetectionMLKPoseHostObject(facebook::jsi::Runtime &_runtime, SKRNMLKitPoseDetectionMLKPose pose);
+    SKRNMLKitPoseDetectionMLKPoseHostObject(facebook::jsi::Runtime &_runtime);
     facebook::jsi::Value get(facebook::jsi::Runtime &runtime, const facebook::jsi::PropNameID &name);
+    virtual std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark> landmarks() {return std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark>(); };
     std::vector<facebook::jsi::PropNameID> getPropertyNames(facebook::jsi::Runtime& rt);
+    virtual SKRNMLKitPoseDetectionMLKPoseLandmark landmarkOfType(std::string landmarkType) {
+        return SKRNMLKitPoseDetectionMLKPoseLandmark();
+    }
 };
 
 /**
@@ -78,7 +81,7 @@ public:
     std::vector<facebook::jsi::PropNameID> getPropertyNames(facebook::jsi::Runtime& rt);
     SKRNMLKitPoseDetector(facebook::jsi::Runtime &_runtime, bool _accurate = false, PoseDetectorDetectionMode _detectionMode = PoseDetectorDetectionModeStream) : runtime(_runtime), accurate(_accurate), detectionMode(_detectionMode) {};
 #ifdef HAS_SKRN_NATIVE_VIDEO
-    virtual std::vector<SKRNMLKitPoseDetectionMLKPose> process(std::shared_ptr<SKRNNativeVideo::SKNativeFrameWrapper>) {return std::vector<SKRNMLKitPoseDetectionMLKPose>(); };
+    virtual std::vector<std::shared_ptr<SKRNMLKitPoseDetection::SKRNMLKitPoseDetectionMLKPose>> process(std::shared_ptr<SKRNNativeVideo::SKNativeFrameWrapper>) {return std::vector<std::shared_ptr<SKRNMLKitPoseDetectionMLKPose>>(); };
 #endif
 };
 
