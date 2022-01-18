@@ -8,11 +8,11 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
 
-@ReactModule(name = MlkitPoseDetectionModule.NAME)
-public class MlkitPoseDetectionModule extends ReactContextBaseJavaModule {
-    public static final String NAME = "MlkitPoseDetection";
+@ReactModule(name = SKRNMlkitPoseDetectionModule.NAME)
+public class SKRNMlkitPoseDetectionModule extends ReactContextBaseJavaModule {
+    public static final String NAME = "SKRNMlkitPoseDetection";
 
-    public MlkitPoseDetectionModule(ReactApplicationContext reactContext) {
+    public SKRNMlkitPoseDetectionModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 

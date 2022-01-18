@@ -9,7 +9,6 @@ import { TestVisionCamera } from './TestVisionCamera';
 initializeVisionCameraFrameProcessor();
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
   const [frameIdx, setFrameIdx] = React.useState(0);
   const [goToFrame, setGoToFrame] = React.useState<string>(String(frameIdx));
   const [frame, setFrame] = React.useState<NativeFrameWrapper>();
