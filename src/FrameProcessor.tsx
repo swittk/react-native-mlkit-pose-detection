@@ -1,7 +1,7 @@
 import type { Frame } from 'react-native-vision-camera'
 import type { MLKitPoseDetectionLandmarkKeyType, SKRNMLKitPoseDetectionMLKPoseLandmark } from './index';
 
-type SKRNMLKitVisionCameraPluginResultPoseItem = {
+export type SKRNMLKitVisionCameraPluginResultPoseItem = {
   [key in MLKitPoseDetectionLandmarkKeyType]?: SKRNMLKitPoseDetectionMLKPoseLandmark
 }
 

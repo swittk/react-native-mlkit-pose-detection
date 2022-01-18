@@ -1,6 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
 import type { NativeFrameWrapper } from 'react-native-native-video';
-export { scanSKRNMLKitPose } from './FrameProcessor';
+export { scanSKRNMLKitPose, SKRNMLKitVisionCameraPluginResultPoseItem } from './FrameProcessor';
 const LINKING_ERROR =
   `The package 'react-native-mlkit-pose-detection' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
