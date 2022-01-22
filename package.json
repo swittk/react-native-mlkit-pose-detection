@@ -1,6 +1,6 @@
 {
   "name": "react-native-mlkit-pose-detection",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": ".",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
