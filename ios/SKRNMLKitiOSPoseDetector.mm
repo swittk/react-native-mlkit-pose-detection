@@ -9,8 +9,8 @@
 
 #ifdef HAS_SKRN_NATIVE_VIDEO
 #import <react-native-native-video/SKiOSNativeVideoCPP.h>
-#endif
 using namespace SKRNNativeVideo;
+#endif
 using namespace SKRNMLKitPoseDetection;
 
 NSDictionary *SKRNMLKitPoseDetectionMapStringLandmarkNamesToNativeNames = @{
