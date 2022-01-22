@@ -12,6 +12,10 @@
 #import <MLKitPoseDetectionCommon/MLKitPoseDetectionCommon.h>
 #import <MLKitPoseDetection/MLKitPoseDetection.h>
 #import <MLKitPoseDetectionAccurate/MLKitPoseDetectionAccurate.h>
+// TODO: Change syntax to be similar to react-native-mlkit-face-detection
+//#import <SKRNMLKitiOSPoseDetector.h>
+//#import <map>
+//using namespace SKRNMLKitPoseDetection;
 
 extern NSDictionary *SKRNMLKitPoseDetectionMapStringLandmarkNamesToNativeNames;
 extern NSDictionary *SKRNMLKitPoseDetectionMapNativeLandmarkNamesToStringNames;

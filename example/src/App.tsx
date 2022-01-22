@@ -45,8 +45,8 @@ export default function App() {
     if (!frame) { Alert.alert('Please pick a video frame first'); return; }
 
     const results = poseDetector.current.process(frame);
-    // console.log('results are', results.map((v) => v.landmarks()));
-    console.log('result LeftEye', results[0].landmarkOfType('LeftEye'));
+    console.log('results are', results.map((v) => v.landmarks()));
+    // console.log('result LeftEye', results[0].landmarkOfType('LeftEye'));
   }
 
 

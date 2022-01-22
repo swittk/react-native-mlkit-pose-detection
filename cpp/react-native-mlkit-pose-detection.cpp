@@ -18,14 +18,6 @@ jsi::Object Point3D::toJSIObject(facebook::jsi::Runtime &runtime) {
     return ret;
 }
 
-jsi::Object SKRNMLKitPoseDetectionMLKPose::toJSIObject(facebook::jsi::Runtime &runtime) {
-    return jsi::Object::createFromHostObject
-    (runtime,
-     std::make_shared<SKRNMLKitPoseDetectionMLKPoseHostObject>
-     (runtime)
-     );
-}
-
 jsi::Object SKRNMLKitPoseDetectionMLKPoseLandmark::toJSIObject(facebook::jsi::Runtime &runtime) {
     jsi::Object ret = jsi::Object(runtime);
     ret.setProperty(runtime, "inFrameLikelihood", inFrameLikelihood);
@@ -35,11 +27,7 @@ jsi::Object SKRNMLKitPoseDetectionMLKPoseLandmark::toJSIObject(facebook::jsi::Ru
     return ret;
 }
 
-
-SKRNMLKitPoseDetectionMLKPoseHostObject::SKRNMLKitPoseDetectionMLKPoseHostObject(facebook::jsi::Runtime &_runtime): runtime(_runtime) {
-}
-
-facebook::jsi::Value SKRNMLKitPoseDetectionMLKPoseHostObject::get(facebook::jsi::Runtime &runtime, const facebook::jsi::PropNameID &name) {
+facebook::jsi::Value SKRNMLKitPoseDetectionMLKPose::get(facebook::jsi::Runtime &runtime, const facebook::jsi::PropNameID &name) {
     std::string methodName = name.utf8(runtime);
     long long methodSwitch = string_hash(methodName.c_str());
     switch (methodSwitch) {
@@ -73,7 +61,7 @@ static std::vector<std::string> nativeMLKPoseHostObjectKeys = {
     "landmarkOfType",
 };
 
-std::vector<facebook::jsi::PropNameID> SKRNMLKitPoseDetectionMLKPoseHostObject::getPropertyNames(facebook::jsi::Runtime& rt) {
+std::vector<facebook::jsi::PropNameID> SKRNMLKitPoseDetectionMLKPose::getPropertyNames(facebook::jsi::Runtime& rt) {
     std::vector<jsi::PropNameID> ret;
     for(std::string key : nativeMLKPoseHostObjectKeys) {
         ret.push_back(jsi::PropNameID::forUtf8(rt, key));
@@ -98,7 +86,7 @@ facebook::jsi::Value SKRNMLKitPoseDetector::get(facebook::jsi::Runtime &runtime,
                 std::vector<std::shared_ptr<SKRNMLKitPoseDetectionMLKPose>> results = process(obj);
                 jsi::Array ret = jsi::Array(runtime, results.size());
                 for(int i = 0; i < results.size(); i++) {
-                    ret.setValueAtIndex(runtime, i, results[i].get()->toJSIObject(runtime));
+                    ret.setValueAtIndex(runtime, i, jsi::Object::createFromHostObject(runtime, results[i]));
                 }
                 return ret;
             });

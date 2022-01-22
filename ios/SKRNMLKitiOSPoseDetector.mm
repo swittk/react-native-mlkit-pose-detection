@@ -84,8 +84,8 @@ NSDictionary *SKRNMLKitPoseDetectionMapNativeLandmarkNamesToStringNames = @{
   MLKPoseLandmarkTypeRightToe: @"RightToe"
 };
 
-SKRNMLKitiOSPoseDetector::SKRNMLKitiOSPoseDetector(facebook::jsi::Runtime &_runtime, bool _accurate, SKRNMLKitPoseDetection::PoseDetectorDetectionMode _detectionMode)
-: SKRNMLKitPoseDetection::SKRNMLKitPoseDetector(_runtime, _accurate, _detectionMode)
+SKRNMLKitiOSPoseDetector::SKRNMLKitiOSPoseDetector(bool _accurate, SKRNMLKitPoseDetection::PoseDetectorDetectionMode _detectionMode)
+: SKRNMLKitPoseDetection::SKRNMLKitPoseDetector(_accurate, _detectionMode)
 {
     MLKCommonPoseDetectorOptions *options;
     if(accurate) {
@@ -110,11 +110,9 @@ SKRNMLKitiOSPoseDetector::~SKRNMLKitiOSPoseDetector() {
     poseDetector = nil;
 }
 
-#ifdef HAS_SKRN_NATIVE_VIDEO
-std::vector<std::shared_ptr<SKRNMLKitPoseDetection::SKRNMLKitPoseDetectionMLKPose>> SKRNMLKitiOSPoseDetector::process(std::shared_ptr<SKRNNativeVideo::SKNativeFrameWrapper> frameWrapper) {
-    SKiOSNativeFrameWrapper *frame = (SKiOSNativeFrameWrapper *)(frameWrapper.get());
-    MLKVisionImage *image = [[MLKVisionImage alloc] initWithBuffer:frame->buffer];
-    image.orientation = frame->orientation;
+std::vector<std::shared_ptr<SKRNMLKitPoseDetectionMLKPose>> SKRNMLKitiOSPoseDetector::processNative(CMSampleBufferRef buf, UIImageOrientation orientation) {
+    MLKVisionImage *image = [[MLKVisionImage alloc] initWithBuffer:buf];
+    image.orientation = orientation;
     NSError *error;
     NSArray <MLKPose *>*poses = [poseDetector resultsInImage:image error:&error];
     if(error) {
@@ -129,6 +127,13 @@ std::vector<std::shared_ptr<SKRNMLKitPoseDetection::SKRNMLKitPoseDetectionMLKPos
         ret.push_back(std::make_shared<SKRNMLKitPoseDetectioniOSMLKPose>(pose));
     }
     return ret;
+}
+
+
+#ifdef HAS_SKRN_NATIVE_VIDEO
+std::vector<std::shared_ptr<SKRNMLKitPoseDetection::SKRNMLKitPoseDetectionMLKPose>> SKRNMLKitiOSPoseDetector::process(std::shared_ptr<SKRNNativeVideo::SKNativeFrameWrapper> frameWrapper) {
+    SKiOSNativeFrameWrapper *frame = (SKiOSNativeFrameWrapper *)(frameWrapper.get());
+    return processNative(frame->buffer, frame->orientation);
 }
 #endif
 
@@ -165,18 +170,22 @@ SKRNMLKitPoseDetectionMLKPoseLandmark SKRNMLKitPoseDetectioniOSMLKPose::landmark
     return landmarkForMLKPoseLandmark(l);
 }
 
-SKRNMLKitPoseDetectioniOSMLKPoseHostObject::SKRNMLKitPoseDetectioniOSMLKPoseHostObject(facebook::jsi::Runtime &_runtime, SKRNMLKitPoseDetectioniOSMLKPose _pose) : SKRNMLKitPoseDetectionMLKPoseHostObject(_runtime), pose(_pose) {
-    
-};
-
-
-using namespace facebook;
-jsi::Object SKRNMLKitPoseDetectioniOSMLKPose::toJSIObject(facebook::jsi::Runtime &runtime) {
-    return jsi::Object::createFromHostObject
-    (runtime,
-     std::make_shared<SKRNMLKitPoseDetectioniOSMLKPoseHostObject>
-     (runtime,
-      *this
-      )
-     );
+NSDictionary *SKRNMLKitPoseDetectioniOSMLKPose::createNativeDictionary() {
+    NSMutableDictionary *poseLandmarks = [NSMutableDictionary new];
+    NSArray<MLKPoseLandmark *>*landmarks = [pose landmarks];
+    for(MLKPoseLandmark *l in landmarks) {
+        NSString *outType = SKRNMLKitPoseDetectionMapNativeLandmarkNamesToStringNames[l.type];
+        NSDictionary *convDict = @{
+            @"type": outType,
+            @"inFrameLikelihood": @(l.inFrameLikelihood),
+            @"position":@{
+                @"x": @(l.position.x),
+                @"y": @(l.position.y),
+                @"z": @(l.position.z)
+            }
+        };
+        [poseLandmarks setObject:convDict forKey:outType];
+    }
+    return poseLandmarks;
 }
+

@@ -42,32 +42,18 @@ public:
 //    std::string type() {return "";}
 };
 
-class SKRNMLKitPoseDetectionMLKPoseHostObject;
-
 /**
  This class should be initialized based on each native platform.
  */
-class SKRNMLKitPoseDetectionMLKPose {
+class SKRNMLKitPoseDetectionMLKPose : public facebook::jsi::HostObject {
 public:
     virtual std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark> landmarks() {return std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark>(); };
     virtual SKRNMLKitPoseDetectionMLKPoseLandmark landmarkOfType(std::string landmarkType) {
         return SKRNMLKitPoseDetectionMLKPoseLandmark();
     }
-    virtual facebook::jsi::Object toJSIObject(facebook::jsi::Runtime &runtime);
-};
-
-class SKRNMLKitPoseDetectionMLKPoseHostObject : public facebook::jsi::HostObject {
-public:
-    facebook::jsi::Runtime &runtime;
-    SKRNMLKitPoseDetectionMLKPoseHostObject(facebook::jsi::Runtime &_runtime);
     facebook::jsi::Value get(facebook::jsi::Runtime &runtime, const facebook::jsi::PropNameID &name);
-    virtual std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark> landmarks() {return std::vector<SKRNMLKitPoseDetectionMLKPoseLandmark>(); };
     std::vector<facebook::jsi::PropNameID> getPropertyNames(facebook::jsi::Runtime& rt);
-    virtual SKRNMLKitPoseDetectionMLKPoseLandmark landmarkOfType(std::string landmarkType) {
-        return SKRNMLKitPoseDetectionMLKPoseLandmark();
-    }
 };
-
 /**
  This class should be initialized based on each native platform.
  */
@@ -76,10 +62,9 @@ public:
     bool accurate;
     PoseDetectorDetectionMode detectionMode;
     
-    facebook::jsi::Runtime &runtime;
     facebook::jsi::Value get(facebook::jsi::Runtime &runtime, const facebook::jsi::PropNameID &name);
     std::vector<facebook::jsi::PropNameID> getPropertyNames(facebook::jsi::Runtime& rt);
-    SKRNMLKitPoseDetector(facebook::jsi::Runtime &_runtime, bool _accurate = false, PoseDetectorDetectionMode _detectionMode = PoseDetectorDetectionModeStream) : runtime(_runtime), accurate(_accurate), detectionMode(_detectionMode) {};
+    SKRNMLKitPoseDetector(bool _accurate = false, PoseDetectorDetectionMode _detectionMode = PoseDetectorDetectionModeStream) : accurate(_accurate), detectionMode(_detectionMode) {};
 #ifdef HAS_SKRN_NATIVE_VIDEO
     virtual std::vector<std::shared_ptr<SKRNMLKitPoseDetection::SKRNMLKitPoseDetectionMLKPose>> process(std::shared_ptr<SKRNNativeVideo::SKNativeFrameWrapper>) {return std::vector<std::shared_ptr<SKRNMLKitPoseDetectionMLKPose>>(); };
 #endif

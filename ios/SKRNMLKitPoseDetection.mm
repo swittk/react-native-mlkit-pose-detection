@@ -57,7 +57,7 @@ RCT_EXPORT_MODULE()
     }
     facebook::jsi::Runtime *runtime = (facebook::jsi::Runtime *)cxxBridge.runtime;
     install(*runtime, [](facebook::jsi::Runtime& runtime, bool accurate, PoseDetectorDetectionMode detectionMode) -> std::shared_ptr<SKRNMLKitPoseDetector> {
-        std::shared_ptr<SKRNMLKitPoseDetector>ret =  std::make_shared<SKRNMLKitiOSPoseDetector>(runtime, accurate, detectionMode);
+        std::shared_ptr<SKRNMLKitPoseDetector>ret =  std::make_shared<SKRNMLKitiOSPoseDetector>(accurate, detectionMode);
         return ret;
     });
 #if HAS_VISION_CAMERA
